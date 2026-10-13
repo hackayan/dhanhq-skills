@@ -4,3 +4,4 @@ journal*.csv
 paper_state_*.json
 logs/
 .dhan_env*
+__pycache__/
