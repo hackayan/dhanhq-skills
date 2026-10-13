@@ -1,0 +1,5 @@
+dhanhq>=2.2.0
+pandas>=1.5
+numpy>=1.23
+pyotp>=2.9          # only for 10_automation/refresh_token.py
+# Dhan-Tradehull    # optional: enables the "TRADEHULL wrapper" half of lessons 1-3

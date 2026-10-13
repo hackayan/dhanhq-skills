@@ -1,0 +1,20 @@
+# Alternative to cron for an always-on loop (live trading).
+# sudo cp dhan-algo.service /etc/systemd/system/ && sudo systemctl daemon-reload
+# sudo systemctl enable --now dhan-algo      # logs: journalctl -u dhan-algo -f
+# It idles (prints "market closed") outside 09:15-15:30, so it can run all week.
+[Unit]
+Description=Dhan live algo (learning-path lesson 9)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=YOU
+WorkingDirectory=/home/YOU/dhanhq-skills/learning-path
+EnvironmentFile=/home/YOU/.dhan_env.systemd
+Environment=DHAN_LIVE_CONFIRM=YES
+ExecStart=/home/YOU/venv/bin/python 09_live_algo.py --strategy supertrend --symbol RELIANCE --qty 1
+Restart=on-failure
+RestartSec=30
+
+[Install]
+WantedBy=multi-user.target

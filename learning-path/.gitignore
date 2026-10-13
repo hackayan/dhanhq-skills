@@ -1,0 +1,6 @@
+data_*.csv
+backtest_results.csv
+journal*.csv
+paper_state_*.json
+logs/
+.dhan_env*

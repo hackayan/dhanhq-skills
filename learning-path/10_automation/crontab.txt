@@ -1,0 +1,22 @@
+# Install with:  crontab -e   (paste below, fix paths)
+# Server timezone MUST be Asia/Kolkata:  sudo timedatectl set-timezone Asia/Kolkata
+# Secrets live in ~/.dhan_env (chmod 600):
+#   export DHAN_CLIENT_ID=... DHAN_PIN=... DHAN_TOTP_SECRET=...
+LP=/home/YOU/dhanhq-skills/learning-path
+PY=/home/YOU/venv/bin/python
+#
+# m  h  dom mon dow  command
+# 08:30  fresh token (no manual login)
+30  8  *   *   1-5  . ~/.dhan_env && cd $LP && $PY 10_automation/refresh_token.py      >> logs/cron.log 2>&1
+# 08:45  health check: token works, funds visible
+45  8  *   *   1-5  . ~/.dhan_env && cd $LP && $PY 01_connect.py                       >> logs/cron.log 2>&1
+# 09:10  server-side seat belt: auto square-off at +1000 / -800 (only add once you trade live)
+#10 9  *   *   1-5  . ~/.dhan_env && cd $LP && DHAN_LIVE_CONFIRM=YES $PY 05_risk_controls.py --set-pnl-exit 1000 800 --live >> logs/cron.log 2>&1
+# 09:20-15:20 every 5 min: one PAPER step per completed candle
+20-59/5 9    * * 1-5  . ~/.dhan_env && cd $LP && $PY 08_paper_trade.py --strategy supertrend --once >> logs/paper.log 2>&1
+*/5     10-14 * * 1-5 . ~/.dhan_env && cd $LP && $PY 08_paper_trade.py --strategy supertrend --once >> logs/paper.log 2>&1
+0-20/5  15   * * 1-5  . ~/.dhan_env && cd $LP && $PY 08_paper_trade.py --strategy supertrend --once >> logs/paper.log 2>&1
+# 15:45  save today's candles for future backtests
+45 15  *   *   1-5  . ~/.dhan_env && cd $LP && $PY 02_market_data.py --symbol RELIANCE --interval 5 >> logs/cron.log 2>&1
+# 16:00  paper P&L report
+0  16  *   *   1-5  . ~/.dhan_env && cd $LP && $PY 08_paper_trade.py --summary            >> logs/cron.log 2>&1

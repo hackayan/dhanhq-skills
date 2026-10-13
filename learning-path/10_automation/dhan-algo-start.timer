@@ -1,0 +1,12 @@
+# Starts dhan-algo.service at 09:16 on weekdays (server timezone Asia/Kolkata).
+# sudo cp dhan-algo-start.timer /etc/systemd/system/ && sudo systemctl enable --now dhan-algo-start.timer
+[Unit]
+Description=Start Dhan algo at market open
+
+[Timer]
+OnCalendar=Mon..Fri 09:16
+Unit=dhan-algo.service
+Persistent=false
+
+[Install]
+WantedBy=timers.target
